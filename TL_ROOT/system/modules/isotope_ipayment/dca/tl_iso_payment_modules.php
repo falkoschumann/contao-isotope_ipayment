@@ -38,7 +38,7 @@
 /**
  * Palettes
  */
-$GLOBALS['TL_DCA']['tl_iso_payment_modules']['palettes']['ipayment'] = '{type_legend},name,label,type;{note_legend:hide},note;{config_legend},new_order_status,trans_type,minimum_total,maximum_total,countries,shipping_modules,product_types;{gateway_legend},ipayment_account_id,ipayment_trxuser_id,ipayment_trxpassword,ipayment_redirect_url;{price_legend:hide},price,tax_class;{expert_legend:hide},guests,protected;{enabled_legend},enabled';
+$GLOBALS['TL_DCA']['tl_iso_payment_modules']['palettes']['ipayment'] = '{type_legend},name,label,type;{note_legend:hide},note;{config_legend},new_order_status,minimum_total,maximum_total,countries,shipping_modules,product_types;{gateway_legend},ipayment_account_id,ipayment_trxuser_id,ipayment_trxpassword,ipayment_security_key;{price_legend:hide},price,tax_class;{expert_legend:hide},guests,protected;{enabled_legend},enabled';
 
 
 /**
@@ -62,8 +62,15 @@ $GLOBALS['TL_DCA']['tl_iso_payment_modules']['fields']['ipayment_trxpassword'] =
 (
 	'label'                   => &$GLOBALS['TL_LANG']['tl_iso_payment_modules']['ipayment_trxpassword'],
 	'exclude'                 => true,
-	'inputType'               => 'password',
-	'eval'                    => array('mandatory'=>true, 'maxlength'=>10, 'tl_class'=>'w100', 'rgxp'=>'digit')
+	'inputType'               => 'text',
+	'eval'                    => array('mandatory'=>true, 'maxlength'=>10, 'tl_class'=>'w50', 'rgxp'=>'digit')
+);
+$GLOBALS['TL_DCA']['tl_iso_payment_modules']['fields']['ipayment_security_key'] = array
+(
+		'label'                   => &$GLOBALS['TL_LANG']['tl_iso_payment_modules']['ipayment_security_key'],
+		'exclude'                 => true,
+		'inputType'               => 'text',
+		'eval'                    => array('maxlength'=>32, 'tl_class'=>'w50')
 );
 
 ?>

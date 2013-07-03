@@ -55,14 +55,35 @@ class PaymentIpayment extends IsotopePayment
 			return false;
 		}
 		
-		if ($this->Input->post('ret_status') == 'SUCCESS')
+		if ($this->Input->post('ret_status') != 'SUCCESS')
 		{
-			$objOrder->date_paid = time();
-			$objOrder->save();
-			return true;
+			$this->log('Checkout order ID ' . $objOrder->id . ' unsuccessfully with ipayment: ' . $this->Input->post('ret_errormsg'), __METHOD__, TL_ERROR);
+			return false;
 		}
+				
+		if (!empty($this->ipayment_security_key))
+		{
+			$amount = round(($this->Isotope->Cart->grandTotal * 100));
+			$currency = $this->Isotope->Config->currency;
+			$hash = md5($this->ipayment_trxuser_id .
+						$amount .
+						$currency .
+						$this->Input->post('ret_authcode') .
+						$this->Input->post('ret_trx_number') .
+						$this->ipayment_security_key);
+			if ($this->Input->post('ret_param_checksum') != $hash)
+			{
+				$this->log('ipayment checkout manipulation in payment for order ID ' . $objOrder->id . '!', __METHOD__, TL_ERROR);
+				$this->redirect($this->addToUrl('step=failed', true));
+				return false;
+			}
 		
-		return false;
+		}
+
+		$objOrder->date_paid = time();
+		$result = $objOrder->updateOrderStatus($this->new_order_status);
+		$objOrder->save();
+		return true;
 	}
 	
 	
@@ -76,18 +97,31 @@ class PaymentIpayment extends IsotopePayment
 		}
 		
 		$objAddress = $this->Isotope->Cart->billingAddress;
+		$amount = round(($this->Isotope->Cart->grandTotal * 100));
+		$currency = $this->Isotope->Config->currency;
 		
 		$arrParam = array
 		(
 			'trxuser_id'				=> $this->ipayment_trxuser_id,
 			'trxpassword'				=> $this->ipayment_trxpassword,
-			'trx_amount'				=> round(($this->Isotope->Cart->grandTotal * 100)),
-			'trx_currency'				=> $this->Isotope->Config->currency,
+			// TODO handle currencies with decimal factor other than 100
+			'trx_amount'				=> $amount,
+			'trx_currency'				=> $currency,
 			'redirect_url'				=> $this->Environment->base . IsotopeFrontend::addQueryStringToUrl('uid=' . $objOrder->uniqid, $this->addToUrl('step=complete', true)),
 			'redirect_action'			=> 'POST',
 			'trx_paymenttyp'			=> 'cc',
-			'shopper_id'				=> $objOrder->id
+			'shopper_id'				=> $objOrder->id,
+			'advanced_strict_id_check'	=> 1
 		);
+		
+		if (!empty($this->ipayment_security_key))
+		{
+			$arrParam['trx_securityhash'] = md5($this->ipayment_trxuser_id .
+												$amount .
+												$currency .
+												$this->ipayment_trxpassword .
+												$this->ipayment_security_key);
+		}
 		
 		$objTemplate = new FrontendTemplate('iso_payment_ipayment');
 
