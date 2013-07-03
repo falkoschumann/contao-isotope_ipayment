@@ -65,6 +65,7 @@ class PaymentIpayment extends IsotopePayment
 		return false;
 	}
 	
+	
 	public function checkoutForm()
 	{
 		$objOrder = new IsotopeOrder();
@@ -92,6 +93,7 @@ class PaymentIpayment extends IsotopePayment
 
 		$objTemplate->action = 'https://ipayment.de/merchant/' . $this->ipayment_account_id . '/processor/2.0/';
 		$objTemplate->params = $arrParam;
+		$objTemplate->submitLabel = $GLOBALS['TL_LANG']['MSC']['ipayment_submit_label'];
 		$objTemplate->id = $this->id;
 
 		return $objTemplate->parse();

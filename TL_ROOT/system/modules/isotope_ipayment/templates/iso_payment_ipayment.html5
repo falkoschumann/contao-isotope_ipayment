@@ -4,7 +4,7 @@
 <?php endforeach; ?>
 <input type="hidden" name="REQUEST_TOKEN" value="{{request_token}}">
 <noscript>
-<input type="submit" value="<?php echo $this->slabel; ?>">
+<input type="submit" value="<?php echo $this->submitLabel; ?>">
 </noscript>
 </form>
 <script>
