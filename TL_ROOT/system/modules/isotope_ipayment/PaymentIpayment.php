@@ -48,16 +48,18 @@ class PaymentIpayment extends IsotopePayment
 	public function processPayment()
 	{
 		$objOrder = new IsotopeOrder();
-		
-		if (!$objOrder->findBy('id', $this->Input->post('shopper_id')))
+		$shopper_id = $this->Input->post('shopper_id');		
+		if (!$objOrder->findBy('id', $shopper_id))
 		{
-			$this->log('Order ID "' . $this->Input->post('shopper_id') . '" not found', __METHOD__, TL_ERROR);
+			$this->log('Order ID "' . $shopper_id . '" not found', __METHOD__, TL_ERROR);
 			return false;
 		}
 		
 		if ($this->Input->post('ret_status') != 'SUCCESS')
 		{
-			$this->log('Checkout order ID ' . $objOrder->id . ' unsuccessfully with ipayment: ' . $this->Input->post('ret_errormsg'), __METHOD__, TL_ERROR);
+			$ret_errorcode = $this->Input->post('ret_errorcode');
+			$ret_errormsg = $this->Input->post('ret_errormsg');
+			$this->log('Payment for order ID "' . $objOrder->id . '" return with error code ' . $ret_errorcode . ': ' . $ret_errormsg, __METHOD__, TL_ERROR);
 			return false;
 		}
 				

@@ -41,6 +41,6 @@
 $GLOBALS['TL_LANG']['tl_iso_payment_modules']['ipayment_account_id'] = array('Account-ID', 'ID des verwendeten ipayment-Accounts. Sie finden diesen Wert in Ihrem ipayment- Konfigurationsmenü unter Allgemeine Daten.');
 $GLOBALS['TL_LANG']['tl_iso_payment_modules']['ipayment_trxuser_id'] = array('Anwendungs-ID', 'Die Anwendungs-ID ist gemeinsam mit der Account-ID die eindeutige Bezeichnung des Händ- lers. Innerhalb eines Accounts können Sie mehrere Anwendungen anlegen und benutzen, zum Beispiel um ipayment an mehrere Shops anzubinden. Die Anwendungs-ID können Sie in Ihrem ipayment-Konfigurationsmenü unter Anwendung > Details auslesen.');
 $GLOBALS['TL_LANG']['tl_iso_payment_modules']['ipayment_trxpassword'] = array('Anwendungspasswort', 'Für jede Anwendung gibt es ein Anwendungspasswort, das automatisch vom ipayment- System vergeben wird. Das Passwort besteht aus Zahlen. Sie finden das Anwendungspasswort in Ihrem ipayment-Konfigurationsmenü unter Anwendungen > Details. Dieser Wert ist aus- schließlich für die Abwicklung von Transaktionen nötig. Ein Login in das ipayment- Konfigurationsmenü ist mit diesem Passwort nicht möglich.');
-$GLOBALS['TL_LANG']['tl_iso_payment_modules']['ipayment_security_key'] = array('Security-Key', '');
+$GLOBALS['TL_LANG']['tl_iso_payment_modules']['ipayment_security_key'] = array('Security-Key', 'Transaktions-Security-Key, der im ipayment-Konfigurationsmenü unter Anwendung festgelegt wird.');
 
 ?>
