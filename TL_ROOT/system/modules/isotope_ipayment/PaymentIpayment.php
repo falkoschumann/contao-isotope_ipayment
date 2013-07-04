@@ -79,7 +79,6 @@ class PaymentIpayment extends IsotopePayment
 				$this->redirect($this->addToUrl('step=failed', true));
 				return false;
 			}
-		
 		}
 
 		$objOrder->date_paid = time();
@@ -113,7 +112,12 @@ class PaymentIpayment extends IsotopePayment
 			'redirect_action'			=> 'POST',
 			'trx_paymenttyp'			=> 'cc',
 			'shopper_id'				=> $objOrder->id,
-			'advanced_strict_id_check'	=> 1
+			'advanced_strict_id_check'	=> 1,
+			'addr_name'					=> $objAddress->firstname . ' ' . $objAddress->lastname,
+			'addr_street'				=> $objAddress->street_1,
+			'addr_zip'					=> $objAddress->postal,
+			'addr_city'					=> $objAddress->city,
+			'addr_email'				=> $objAddress->email
 		);
 		
 		if (!empty($this->ipayment_security_key))

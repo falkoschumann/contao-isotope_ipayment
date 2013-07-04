@@ -16,9 +16,11 @@ Notwendige Seiten om Contao:
  
 Außerdem:
 
+ - Security-Key (`trx_securityhash`)
+ - Doppelzahlungen verhindern (`advanced_strict_id_check`, `shopper_id`)
  - Session-ID vorgenerieren, um die an ipayment geschickten Daten vor
    Manipulation zu schützen
- - Hidden-Trigger-Sript für eine sichere Rückmeldung
+ - Hidden-Trigger-Sript für eine sichere Rückmeldung (`hidden_trigger_url`)
 
 
 Basisparameter
