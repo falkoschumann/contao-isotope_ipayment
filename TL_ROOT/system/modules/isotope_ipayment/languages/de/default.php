@@ -2,7 +2,7 @@
 
 /**
  * Isotope ipayment
- * Copyright (c) 2013, Muspellheim.de
+ * Copyright (c) 2013, Falko Schumann <http://www.muspellheim.de>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,7 +27,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  *
  * PHP version 5
- * @copyright  Muspellheim.de 2013 
+ * @copyright  2013 Falko Schumann
  * @author     Falko Schumann <falko.schumann@muspellheim.de> 
  * @package    Language 
  * @license    BSD-2-Clause 
