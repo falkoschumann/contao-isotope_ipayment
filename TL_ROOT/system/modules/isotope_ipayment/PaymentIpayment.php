@@ -47,11 +47,55 @@ class PaymentIpayment extends IsotopePayment
 
 	public function processPayment()
 	{
+		if ($this->ipayment_use_hidden_trigger)
+		{		
+			$objOrder = new IsotopeOrder();
+			$shopper_id = $this->Input->post('shopper_id');
+			if (!$objOrder->findBy('id', $shopper_id))
+			{
+				$this->log('Order ID ' . $shopper_id . ' not found', __METHOD__, TL_ERROR);
+				return false;
+			}
+						
+			if ($objOrder->date_paid > 0 && $objOrder->date_paid <= time())
+			{
+				IsotopeFrontend::clearTimeout();
+				return true;
+			}
+
+			if (IsotopeFrontend::setTimeout())
+			{
+				// Do not index or cache the page
+				global $objPage;
+				$objPage->noSearch = 1;
+				$objPage->cache = 0;
+
+				$objTemplate = new FrontendTemplate('mod_message');
+				$objTemplate->type = 'processing';
+				$objTemplate->message = $GLOBALS['TL_LANG']['MSC']['payment_processing'];
+				return $objTemplate->parse();
+			}
+
+			$this->log('Payment could not be processed.', __METHOD__, TL_ERROR);
+			$this->redirect($this->addToUrl('step=failed', true));
+		}
+		else
+		{
+			return $this->internalProcessPayment();
+		}
+	}
+	
+	/**
+	 * 
+	 * @param IsotopeOrder $objOrder
+	 */
+	private function internalProcessPayment()
+	{
 		$objOrder = new IsotopeOrder();
-		$shopper_id = $this->Input->post('shopper_id');		
+		$shopper_id = $this->Input->post('shopper_id');
 		if (!$objOrder->findBy('id', $shopper_id))
 		{
-			$this->log('Order ID "' . $shopper_id . '" not found', __METHOD__, TL_ERROR);
+			$this->log('Order ID ' . $shopper_id . ' not found', __METHOD__, TL_ERROR);
 			return false;
 		}
 		
@@ -59,20 +103,26 @@ class PaymentIpayment extends IsotopePayment
 		{
 			$ret_errorcode = $this->Input->post('ret_errorcode');
 			$ret_errormsg = $this->Input->post('ret_errormsg');
-			$this->log('Payment for order ID "' . $objOrder->id . '" return with error code ' . $ret_errorcode . ': ' . $ret_errormsg, __METHOD__, TL_ERROR);
+			$this->log('Payment for order ID ' . $objOrder->id . ' return with error code ' . $ret_errorcode . ': ' . $ret_errormsg, __METHOD__, TL_ERROR);
 			return false;
 		}
-				
+		
 		if (!empty($this->ipayment_security_key))
 		{
-			$amount = round(($this->Isotope->Cart->grandTotal * 100));
+			$amount = round(($objOrder->grandTotal * 100));
 			$currency = $this->Isotope->Config->currency;
 			$hash = md5($this->ipayment_trxuser_id .
-						$amount .
-						$currency .
-						$this->Input->post('ret_authcode') .
-						$this->Input->post('ret_trx_number') .
-						$this->ipayment_security_key);
+					$amount .
+					$currency .
+					$this->Input->post('ret_authcode') .
+					$this->Input->post('ret_trx_number') .
+					$this->ipayment_security_key);
+			$this->log('$txt=' . $this->ipayment_trxuser_id . ' / ' .
+					$amount . ' / ' .
+					$currency . ' / ' .
+					$this->Input->post('ret_authcode') . ' / ' .
+					$this->Input->post('ret_trx_number') . ' / ' .
+					$this->ipayment_security_key . ', $hash=' . $hash . ', ret_param_checksum=' . $this->Input->post('ret_param_checksum'), __METHOD__, TL_GENERAL);
 			if ($this->Input->post('ret_param_checksum') != $hash)
 			{
 				$this->log('ipayment checkout manipulation in payment for order ID ' . $objOrder->id . '!', __METHOD__, TL_ERROR);
@@ -80,14 +130,21 @@ class PaymentIpayment extends IsotopePayment
 				return false;
 			}
 		}
-
+		
 		$objOrder->date_paid = time();
 		$result = $objOrder->updateOrderStatus($this->new_order_status);
 		$objOrder->save();
+		$this->log('Payment with ipayment received for order ID ' . $objOrder->id . '.', __METHOD__, TL_GENERAL);
 		return true;
 	}
 	
 	
+	public function processPostSale()
+	{
+		return $this->internalProcessPayment();
+	}
+
+
 	public function checkoutForm()
 	{
 		$objOrder = new IsotopeOrder();
@@ -117,9 +174,9 @@ class PaymentIpayment extends IsotopePayment
 			'addr_street'				=> $objAddress->street_1,
 			'addr_zip'					=> $objAddress->postal,
 			'addr_city'					=> $objAddress->city,
-			'addr_email'				=> $objAddress->email
+			'addr_email'				=> $objAddress->email 
 		);
-		
+
 		if (!empty($this->ipayment_security_key))
 		{
 			$arrParam['trx_securityhash'] = md5($this->ipayment_trxuser_id .
@@ -127,6 +184,11 @@ class PaymentIpayment extends IsotopePayment
 												$currency .
 												$this->ipayment_trxpassword .
 												$this->ipayment_security_key);
+		}
+		
+		if ($this->ipayment_use_hidden_trigger)
+		{
+			$arrParam['hidden_trigger_url'] = $this->Environment->base . 'system/modules/isotope/postsale.php?mod=pay&id=' . $this->id;
 		}
 		
 		$objTemplate = new FrontendTemplate('iso_payment_ipayment');
