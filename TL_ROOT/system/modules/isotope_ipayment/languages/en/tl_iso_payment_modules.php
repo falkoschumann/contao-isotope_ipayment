@@ -42,6 +42,7 @@ $GLOBALS['TL_LANG']['tl_iso_payment_modules']['ipayment_account_id'] = array('Ac
 $GLOBALS['TL_LANG']['tl_iso_payment_modules']['ipayment_trxuser_id'] = array('User Id', '');
 $GLOBALS['TL_LANG']['tl_iso_payment_modules']['ipayment_trxpassword'] = array('Password', '');
 $GLOBALS['TL_LANG']['tl_iso_payment_modules']['ipayment_security_key'] = array('Security Key', '');
+$GLOBALS['TL_LANG']['tl_iso_payment_modules']['ipayment_advanced_strict_id_check'] = array('Use advanced strict id check', '');
 $GLOBALS['TL_LANG']['tl_iso_payment_modules']['ipayment_use_hidden_trigger'] = array('Use hidden trigger', '');
 
 ?>

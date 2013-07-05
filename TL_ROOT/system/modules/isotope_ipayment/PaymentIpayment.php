@@ -51,9 +51,9 @@ class PaymentIpayment extends IsotopePayment
 		{		
 			$objOrder = new IsotopeOrder();
 			$shopper_id = $this->Input->post('shopper_id');
-			if (!$objOrder->findBy('id', $shopper_id))
+			if (!$objOrder->findBy('uniqid', $shopper_id))
 			{
-				$this->log('Order ID ' . $shopper_id . ' not found', __METHOD__, TL_ERROR);
+				$this->log('Order with unique ID "' . $shopper_id . '" not found', __METHOD__, TL_ERROR);
 				return false;
 			}
 						
@@ -93,9 +93,9 @@ class PaymentIpayment extends IsotopePayment
 	{
 		$objOrder = new IsotopeOrder();
 		$shopper_id = $this->Input->post('shopper_id');
-		if (!$objOrder->findBy('id', $shopper_id))
+		if (!$objOrder->findBy('uniqid', $shopper_id))
 		{
-			$this->log('Order ID ' . $shopper_id . ' not found', __METHOD__, TL_ERROR);
+			$this->log('Order with unique ID "' . $shopper_id . '" not found', __METHOD__, TL_ERROR);
 			return false;
 		}
 		
@@ -117,12 +117,6 @@ class PaymentIpayment extends IsotopePayment
 					$this->Input->post('ret_authcode') .
 					$this->Input->post('ret_trx_number') .
 					$this->ipayment_security_key);
-			$this->log('$txt=' . $this->ipayment_trxuser_id . ' / ' .
-					$amount . ' / ' .
-					$currency . ' / ' .
-					$this->Input->post('ret_authcode') . ' / ' .
-					$this->Input->post('ret_trx_number') . ' / ' .
-					$this->ipayment_security_key . ', $hash=' . $hash . ', ret_param_checksum=' . $this->Input->post('ret_param_checksum'), __METHOD__, TL_GENERAL);
 			if ($this->Input->post('ret_param_checksum') != $hash)
 			{
 				$this->log('ipayment checkout manipulation in payment for order ID ' . $objOrder->id . '!', __METHOD__, TL_ERROR);
@@ -168,8 +162,8 @@ class PaymentIpayment extends IsotopePayment
 			'redirect_url'				=> $this->Environment->base . IsotopeFrontend::addQueryStringToUrl('uid=' . $objOrder->uniqid, $this->addToUrl('step=complete', true)),
 			'redirect_action'			=> 'POST',
 			'trx_paymenttyp'			=> 'cc',
-			'shopper_id'				=> $objOrder->id,
-			'advanced_strict_id_check'	=> 1,
+			'shopper_id'				=> $objOrder->uniqid,
+			'advanced_strict_id_check'	=> $this->ipayment_advanced_strict_id_check,
 			'addr_name'					=> $objAddress->firstname . ' ' . $objAddress->lastname,
 			'addr_street'				=> $objAddress->street_1,
 			'addr_zip'					=> $objAddress->postal,

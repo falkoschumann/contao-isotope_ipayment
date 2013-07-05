@@ -20,4 +20,5 @@ CREATE TABLE `tl_iso_payment_modules` (
   `ipayment_trxpassword` int(10) NOT NULL default '0',
   `ipayment_security_key` varchar(32) NOT NULL default '',
   `ipayment_use_hidden_trigger` char(1) NOT NULL default '1',
+  `ipayment_advanced_strict_id_check` char(1) NOT NULL default '1'
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
