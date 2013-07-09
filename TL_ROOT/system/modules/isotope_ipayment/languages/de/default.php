@@ -40,4 +40,10 @@
  */
 $GLOBALS['TL_LANG']['MSC']['ipayment_submit_label'] = 'Bezahlen';
 
+/**
+ * Payment
+ */
+$GLOBALS['ISO_LANG']['PAY']['ipayment'] = array('ipayment (1&1)', 'Schnittstelle zum Bezahlsystem ipayment von 1&1. Unterstützt verschiedene Kreditkarten. Der Shop wird sofort über erfolgreiche Transaktionen informiert.');
+
+
 ?>

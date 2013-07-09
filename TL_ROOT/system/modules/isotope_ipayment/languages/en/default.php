@@ -40,4 +40,10 @@
  */
 $GLOBALS['TL_LANG']['MSC']['ipayment_submit_label'] = 'Pay';
 
+/**
+ * Payment
+ */
+$GLOBALS['ISO_LANG']['PAY']['ipayment'] = array('ipayment (1&1)', 'Payment gateway for the 1&1 ipayment payment system that supports various card types. The store will be instantly notified about successfull transactions.');
+
+
 ?>

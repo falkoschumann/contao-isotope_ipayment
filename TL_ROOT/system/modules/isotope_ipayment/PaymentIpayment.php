@@ -50,13 +50,12 @@ class PaymentIpayment extends IsotopePayment
 		if ($this->ipayment_use_hidden_trigger)
 		{		
 			$objOrder = new IsotopeOrder();
-			$shopper_id = $this->Input->post('shopper_id');
-			if (!$objOrder->findBy('uniqid', $shopper_id))
+			if (!$objOrder->findBy('cart_id', $this->Isotope->Cart->id))
 			{
-				$this->log('Order with unique ID "' . $shopper_id . '" not found', __METHOD__, TL_ERROR);
+				$this->log('Order to cart ID "' . $this->Isotope->Cart->id . '" not found', __METHOD__, TL_ERROR);
 				return false;
 			}
-						
+
 			if ($objOrder->date_paid > 0 && $objOrder->date_paid <= time())
 			{
 				IsotopeFrontend::clearTimeout();
@@ -98,7 +97,7 @@ class PaymentIpayment extends IsotopePayment
 			$this->log('Order with unique ID "' . $shopper_id . '" not found', __METHOD__, TL_ERROR);
 			return false;
 		}
-		
+
 		if ($this->Input->post('ret_status') != 'SUCCESS')
 		{
 			$ret_errorcode = $this->Input->post('ret_errorcode');
@@ -106,15 +105,15 @@ class PaymentIpayment extends IsotopePayment
 			$this->log('Payment for order ID ' . $objOrder->id . ' return with error code ' . $ret_errorcode . ': ' . $ret_errormsg, __METHOD__, TL_ERROR);
 			return false;
 		}
-		
+
 		$remoteIp = $this->Environment->ip;
 		$remoteHostname = gethostbyaddr($remoteIp);
 		if (!preg_match('/\.ipayment\.de$/', $remoteHostname) || !in_array($remoteIp, array('212.227.34.218', '212.227.34.219', '212.227.34.220')))
 		{
 			$this->log('Payment for order ID ' . $objOrder->id . ' was not from ipayment.de: ' . $remoteIp . ' / ' . $remoteHostname, __METHOD__, TL_ERROR);
 			return false;
-		}		
-		
+		}
+
 		if (!empty($this->ipayment_security_key))
 		{
 			$amount = round(($objOrder->grandTotal * 100));
@@ -132,7 +131,13 @@ class PaymentIpayment extends IsotopePayment
 				return false;
 			}
 		}
-		
+
+		if (!$objOrder->checkout())
+		{
+			$this->log('ipayment checkout for Order ID "' . $objOrder->id . '" failed', __METHOD__, TL_ERROR);
+			return;
+		}
+
 		$objOrder->date_paid = time();
 		$result = $objOrder->updateOrderStatus($this->new_order_status);
 		$objOrder->save();
@@ -143,7 +148,7 @@ class PaymentIpayment extends IsotopePayment
 	
 	public function processPostSale()
 	{
-		return $this->internalProcessPayment();
+		$this->internalProcessPayment();
 	}
 
 
