@@ -1,7 +1,7 @@
 <?php if (!defined('TL_ROOT')) die('You cannot access this file directly!');
 
 /**
- * Isotope ipayment
+ * Isotope ipayment Extension for Contao
  * Copyright (c) 2013, Falko Schumann <http://www.muspellheim.de>
  * All rights reserved.
  *
@@ -27,9 +27,9 @@
  * POSSIBILITY OF SUCH DAMAGE.
  *
  * PHP version 5
- * @copyright  2013 Falko Schumann
+ * @copyright  2013, Falko Schumann <http://www.muspellheim.de>
  * @author     Falko Schumann <falko.schumann@muspellheim.de> 
- * @package    Language 
+ * @package    IsotopeIpayment 
  * @license    BSD-2-Clause 
  * @filesource
  */

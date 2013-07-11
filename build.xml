@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<project name="books" default="package">
+<project name="isotope_ipayment" default="package">
 
 	<property file="build.properties"/>
 
@@ -21,7 +21,7 @@
 	</target>
 
 	<target name="uninstall">
-		<delete dir="${install.dir}/system/modules/isotope_ipayment"/>
+		<delete dir="${install.dir}/system/modules/${ant.project.name}"/>
 	</target>
 
 </project>
