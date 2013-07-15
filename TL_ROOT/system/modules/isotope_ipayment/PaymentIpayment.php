@@ -85,11 +85,13 @@ class PaymentIpayment extends IsotopePayment
 	}
 	
 	/**
-	 * 
+	 * Validate return state, save successfull order or log error.
+	 *  
 	 * @param IsotopeOrder $objOrder
 	 */
 	private function internalProcessPayment()
 	{
+		// look for order
 		$objOrder = new IsotopeOrder();
 		$shopper_id = $this->Input->post('shopper_id');
 		if (!$objOrder->findBy('uniqid', $shopper_id))
@@ -98,14 +100,18 @@ class PaymentIpayment extends IsotopePayment
 			return false;
 		}
 
+		// check return state
 		if ($this->Input->post('ret_status') != 'SUCCESS')
 		{
 			$ret_errorcode = $this->Input->post('ret_errorcode');
+			$ret_fatalerror = $this->Input->post('ret_fatalerror');
 			$ret_errormsg = $this->Input->post('ret_errormsg');
-			$this->log('Payment for order ID ' . $objOrder->id . ' return with error code ' . $ret_errorcode . ': ' . $ret_errormsg, __METHOD__, TL_ERROR);
+			$ret_additionalmsg = $this->Input->post('ret_additionalmsg');
+			$this->log('Payment for order ID ' . $objOrder->id . ' return with' . ($ret_fatalerror ? ' fatal': '') . ' error: code=' . $ret_errorcode . ', error message=' . $ret_errormsg . ' additional message=' . $ret_additionalmsg, __METHOD__, TL_ERROR);
 			return false;
 		}
 
+		// check remote IP and hostname
 		$remoteIp = $this->Environment->ip;
 		$remoteHostname = gethostbyaddr($remoteIp);
 		if (!preg_match('/\.ipayment\.de$/', $remoteHostname) || !in_array($remoteIp, array('212.227.34.218', '212.227.34.219', '212.227.34.220')))
@@ -114,6 +120,7 @@ class PaymentIpayment extends IsotopePayment
 			return false;
 		}
 
+		// validate order with security key
 		if (!empty($this->ipayment_security_key))
 		{
 			$amount = round(($objOrder->grandTotal * 100));
@@ -132,14 +139,42 @@ class PaymentIpayment extends IsotopePayment
 			}
 		}
 
+		// TODO validate order data
+
+		// add paymentinfo to order
+		$arrPayment = array(
+				'ret_transdate'				=> $this->Input->post('ret_transdate'),
+				'ret_transtime'				=> $this->Input->post('ret_transtime'),
+				'ret_trx_number'			=> $this->Input->post('ret_trx_number'),
+				'ret_authcode'				=> $this->Input->post('ret_authcode'),
+				'ret_ip'					=> $this->Input->post('ret_ip'),
+				'trx_paymentdata_country'	=> $this->Input->post('trx_paymentdata_country'),
+				'trx_remoteip_country'		=> $this->Input->post('trx_remoteip_country'),
+				'trx_paymentmethod'			=> $this->Input->post('trx_paymentmethod'),
+				'addr_name'					=> $this->Input->post('paydata_addr_name'),
+				'addr_email'				=> $this->Input->post('paydata_addr_email'),
+				'addr_street'				=> $this->Input->post('paydata_addr_street'),
+				'addr_street2'				=> $this->Input->post('paydata_addr_street2'),
+				'addr_city'					=> $this->Input->post('paydata_addr_city'),
+				'addr_zip'					=> $this->Input->post('paydata_addr_zip'),
+				'addr_country'				=> $this->Input->post('paydata_addr_country'),
+				'addr_state'				=> $this->Input->post('paydata_addr_state'),
+				'addr_telefon'				=> $this->Input->post('paydata_addr_telefon'),
+				'addr_telefax'				=> $this->Input->post('paydata_addr_telefax'),
+				'paydata_cc_cardowner'		=> $this->Input->post('paydata_cc_cardowner'),
+				'paydata_cc_number'			=> $this->Input->post('paydata_cc_number'),
+				'paydata_cc_expdate'		=> $this->Input->post('paydata_cc_expdate')
+		);
+		$objOrder->payment_data = $arrPayment;
+		
 		if (!$objOrder->checkout())
 		{
-			$this->log('ipayment checkout for Order ID "' . $objOrder->id . '" failed', __METHOD__, TL_ERROR);
+			$this->log('ipayment checkout for Order ID ' . $objOrder->id . ' failed', __METHOD__, TL_ERROR);
 			return;
 		}
-
+		
 		$objOrder->date_paid = time();
-		$result = $objOrder->updateOrderStatus($this->new_order_status);
+		$objOrder->updateOrderStatus($this->new_order_status);
 		$objOrder->save();
 		$this->log('Payment with ipayment received for order ID ' . $objOrder->id . '.', __METHOD__, TL_GENERAL);
 		return true;
@@ -167,21 +202,22 @@ class PaymentIpayment extends IsotopePayment
 		
 		$arrParam = array
 		(
-			'trxuser_id'				=> $this->ipayment_trxuser_id,
-			'trxpassword'				=> $this->ipayment_trxpassword,
+			'trxuser_id'					=> $this->ipayment_trxuser_id,
+			'trxpassword'					=> $this->ipayment_trxpassword,
 			// TODO handle currencies with decimal factor other than 100
-			'trx_amount'				=> $amount,
-			'trx_currency'				=> $currency,
-			'redirect_url'				=> $this->Environment->base . IsotopeFrontend::addQueryStringToUrl('uid=' . $objOrder->uniqid, $this->addToUrl('step=complete', true)),
-			'redirect_action'			=> 'POST',
-			'trx_paymenttyp'			=> 'cc',
-			'shopper_id'				=> $objOrder->uniqid,
-			'advanced_strict_id_check'	=> $this->ipayment_advanced_strict_id_check,
-			'addr_name'					=> $objAddress->firstname . ' ' . $objAddress->lastname,
-			'addr_street'				=> $objAddress->street_1,
-			'addr_zip'					=> $objAddress->postal,
-			'addr_city'					=> $objAddress->city,
-			'addr_email'				=> $objAddress->email 
+			'trx_amount'					=> $amount,
+			'trx_currency'					=> $currency,
+			'redirect_url'					=> $this->Environment->base . IsotopeFrontend::addQueryStringToUrl('uid=' . $objOrder->uniqid, $this->addToUrl('step=complete', true)),
+			'redirect_action'				=> 'POST',
+			'trx_paymenttyp'				=> 'cc',
+			'shopper_id'					=> $objOrder->uniqid,
+			'advanced_strict_id_check'		=> $this->ipayment_advanced_strict_id_check,
+			'addr_name'						=> $objAddress->firstname . ' ' . $objAddress->lastname,
+			'addr_street'					=> $objAddress->street_1,
+			'addr_zip'						=> $objAddress->postal,
+			'addr_city'						=> $objAddress->city,
+			'addr_email'					=> $objAddress->email,
+			'return_paymentdata_details'	=> 1
 		);
 
 		if (!empty($this->ipayment_security_key))
@@ -208,6 +244,41 @@ class PaymentIpayment extends IsotopePayment
 		return $objTemplate->parse();
 	}
 
+	
+	public function backendInterface($orderId)
+	{
+		$objOrder = new IsotopeOrder();
+		if (!$objOrder->findBy('id', $orderId))
+		{
+			return parent::backendInterface($orderId);
+		}
+		
+		$result = '
+<div id="tl_buttons">
+<a href="'.ampersand(str_replace('&key=payment', '', $this->Environment->request)).'" class="header_back" title="'.specialchars($GLOBALS['TL_LANG']['MSC']['backBT']).'">'.$GLOBALS['TL_LANG']['MSC']['backBT'].'</a>
+</div>
+	
+<h2 class="sub_headline">' . $this->name . ' (' . $GLOBALS['ISO_LANG']['PAY'][$this->type][0] . ')' . '</h2>
+	
+<div class="tl_formbody_edit">
+<div class="tl_tbox block">
+<table border="1">';
+
+		$arrPayment = deserialize($objOrder->payment_data, true);
+		foreach ($arrPayment as $key => $value)		
+		{
+			$result .= '<tr>
+	<td>' . $key . '</td>
+	<td>' . $value . '</td>
+</tr>';
+		}
+		
+		$result.= '</table>
+</div>
+</div>';
+		return $result;
+	}
+	
 }
 
 ?>
