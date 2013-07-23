@@ -38,11 +38,11 @@
 /**
  * Fields
  */
-$GLOBALS['TL_LANG']['tl_iso_payment_modules']['ipayment_account_id'] = array('Account-ID', 'ID des verwendeten ipayment-Accounts. Sie finden diesen Wert in Ihrem ipayment- Konfigurationsmenü unter Allgemeine Daten.');
-$GLOBALS['TL_LANG']['tl_iso_payment_modules']['ipayment_trxuser_id'] = array('Anwendungs-ID', 'Die Anwendungs-ID ist gemeinsam mit der Account-ID die eindeutige Bezeichnung des Händ- lers. Innerhalb eines Accounts können Sie mehrere Anwendungen anlegen und benutzen, zum Beispiel um ipayment an mehrere Shops anzubinden. Die Anwendungs-ID können Sie in Ihrem ipayment-Konfigurationsmenü unter Anwendung > Details auslesen.');
-$GLOBALS['TL_LANG']['tl_iso_payment_modules']['ipayment_trxpassword'] = array('Anwendungspasswort', 'Für jede Anwendung gibt es ein Anwendungspasswort, das automatisch vom ipayment- System vergeben wird. Das Passwort besteht aus Zahlen. Sie finden das Anwendungspasswort in Ihrem ipayment-Konfigurationsmenü unter Anwendungen > Details. Dieser Wert ist aus- schließlich für die Abwicklung von Transaktionen nötig. Ein Login in das ipayment- Konfigurationsmenü ist mit diesem Passwort nicht möglich.');
-$GLOBALS['TL_LANG']['tl_iso_payment_modules']['ipayment_security_key'] = array('Security-Key', 'Transaktions-Security-Key, der im ipayment-Konfigurationsmenü unter Anwendung festgelegt wird.');
-$GLOBALS['TL_LANG']['tl_iso_payment_modules']['ipayment_advanced_strict_id_check'] = array('Erweiterte Prüfung der IDs zur Vermeidung von Doppeltransaktionen durchführen?', 'Wenn dieser ID-Check aktiv ist, wird vor der Abwicklung einer Transaktion geprüft, ob schon eine erfolgreiche Transaktion mit der angegebenen Shopper-ID abgewickelt wurde.');
-$GLOBALS['TL_LANG']['tl_iso_payment_modules']['ipayment_use_hidden_trigger'] = array('Hidden-Trigger verwenden', '');
+$GLOBALS['TL_LANG']['tl_iso_payment_modules']['ipayment_account_id'] = array('Account-ID', 'Die ID Ihres ipayment-Accounts.');
+$GLOBALS['TL_LANG']['tl_iso_payment_modules']['ipayment_trxuser_id'] = array('Anwendungs-ID', 'Die Anwendungs-ID für den Shop. Über einen Account können mehrere Anwendungen verwaltet werden.');
+$GLOBALS['TL_LANG']['tl_iso_payment_modules']['ipayment_trxpassword'] = array('Anwendungspasswort', 'Jede Anwendung verfügt über ein eigenes ein Anwendungspasswort');
+$GLOBALS['TL_LANG']['tl_iso_payment_modules']['ipayment_security_key'] = array('Security-Key', 'Mit Hilfe des optionalen Security-Keys kann eine Transaktion zusätzlich abgesichert werden.');
+$GLOBALS['TL_LANG']['tl_iso_payment_modules']['ipayment_advanced_strict_id_check'] = array('Erweiterte Prüfung zur Vermeidung von Doppeltransaktionen durchführen?', 'Ist diese Prüfung aktiviert, wird für jeder Transaktion eine eindeutige Buchungsnummer zugeordnet, die von ipayment vor der Bezahlung geprüft wird.');
+$GLOBALS['TL_LANG']['tl_iso_payment_modules']['ipayment_use_hidden_trigger'] = array('Hidden-Trigger verwenden', 'Bei Aktivierung wird das Ergebnis der Transaktion von ipayment über eine gesonderte URL an den Shop übermittelt. Damit wird die Transaktion auch dann berücksichtigt, wenn der Kunde nach Bezahlung nicht zum Shop zurückgelangt.');
 
 ?>
