@@ -90,7 +90,7 @@ class PaymentIpayment extends IsotopePayment
 			}
 			catch (Exception $ex)
 			{
-				$this->log('ipayment process for Order ID ' . $objOrder->id . ' failed', __METHOD__, TL_ERROR);
+				$this->log('ipayment process for Order ID ' . $objOrder->id . ' failed: ' . $ex->getMessage(), __METHOD__, TL_ERROR);
 				$this->redirect($this->addToUrl('step=failed', true));
 			}
 		}
@@ -254,7 +254,7 @@ class PaymentIpayment extends IsotopePayment
 		}
 		catch (Exception $ex)
 		{
-			$this->log('ipayment process for Order ID ' . $objOrder->id . ' failed', __METHOD__, TL_ERROR);
+			$this->log('ipayment process for Order ID ' . $objOrder->id . ' failed: ' . $ex->getMessage(), __METHOD__, TL_ERROR);
 		}
 	}
 
