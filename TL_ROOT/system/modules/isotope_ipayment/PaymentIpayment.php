@@ -83,15 +83,25 @@ class PaymentIpayment extends IsotopePayment
 			return $this->internalProcessPayment();
 		}
 	}
-	
-	/**
-	 * Validate return state, save successfull order or log error.
-	 *  
-	 * @param IsotopeOrder $objOrder
-	 */
+
+
 	private function internalProcessPayment()
 	{
-		// look for order
+		$objOrder = $this->lookForOrder();
+		$this->checkReturnState($objOrder);
+		$this->validateRemoteIpAndHostname($objOrder);
+		$this->validateOrderWithSecurityKey($objOrder);
+		// TODO validate order data
+		$this->addPaymentDataToOrder($objOrder);
+		return $this->checkoutOrder($objOrder);
+	}
+
+
+	/**
+	 * @return IsotopeOrder
+	 */
+	private function lookForOrder()
+	{
 		$objOrder = new IsotopeOrder();
 		$shopper_id = $this->Input->post('shopper_id');
 		if (!$objOrder->findBy('uniqid', $shopper_id))
@@ -99,8 +109,15 @@ class PaymentIpayment extends IsotopePayment
 			$this->log('Order with unique ID "' . $shopper_id . '" not found', __METHOD__, TL_ERROR);
 			return false;
 		}
+		return $objOrder;
+	}
 
-		// check return state
+
+	/**
+	 * @param IsotopeOrder $objOrder
+	 */
+	private function checkReturnState(&$objOrder)
+	{
 		if ($this->Input->post('ret_status') != 'SUCCESS')
 		{
 			$ret_errorcode = $this->Input->post('ret_errorcode');
@@ -110,8 +127,14 @@ class PaymentIpayment extends IsotopePayment
 			$this->log('Payment for order ID ' . $objOrder->id . ' return with' . ($ret_fatalerror ? ' fatal': '') . ' error: code=' . $ret_errorcode . ', error message=' . $ret_errormsg . ' additional message=' . $ret_additionalmsg, __METHOD__, TL_ERROR);
 			return false;
 		}
+	}
 
-		// check remote IP and hostname
+
+	/**
+	 * @param IsotopeOrder $objOrder
+	 */
+	private function validateRemoteIpAndHostname(&$objOrder)
+	{
 		if ($this->ipayment_use_hidden_trigger)
 		{
 			$remoteIp = $this->Environment->ip;
@@ -121,9 +144,15 @@ class PaymentIpayment extends IsotopePayment
 				$this->log('Payment for order ID ' . $objOrder->id . ' was not from ipayment.de: ' . $remoteIp . ' / ' . $remoteHostname, __METHOD__, TL_ERROR);
 				return false;
 			}
-		}
-		
-		// validate order with security key
+		}	
+	}
+
+
+	/**
+	 * @param IsotopeOrder $objOrder
+	 */
+	private function validateOrderWithSecurityKey(&$objOrder)
+	{
 		if (!empty($this->ipayment_security_key))
 		{
 			$amount = round(($objOrder->grandTotal * 100));
@@ -141,10 +170,13 @@ class PaymentIpayment extends IsotopePayment
 				return false;
 			}
 		}
+	}
 
-		// TODO validate order data
-
-		// add paymentinfo to order
+	/**
+	 * @param IsotopeOrder $objOrder
+	 */
+	private function addPaymentDataToOrder(&$objOrder)
+	{
 		$arrPayment = array(
 				'ret_transdate'				=> $this->Input->post('ret_transdate'),
 				'ret_transtime'				=> $this->Input->post('ret_transtime'),
@@ -168,22 +200,30 @@ class PaymentIpayment extends IsotopePayment
 				'paydata_cc_number'			=> $this->Input->post('paydata_cc_number'),
 				'paydata_cc_expdate'		=> $this->Input->post('paydata_cc_expdate')
 		);
-		$objOrder->payment_data = $arrPayment;
-		
+		$objOrder->payment_data = $arrPayment;	
+		$objOrder->save();
+	}
+
+
+	/**
+	 * @param IsotopeOrder $objOrder
+	 */
+	private function checkoutOrder(&$objOrder)
+	{
 		if (!$objOrder->checkout())
 		{
 			$this->log('ipayment checkout for Order ID ' . $objOrder->id . ' failed', __METHOD__, TL_ERROR);
 			return;
 		}
-		
+
 		$objOrder->date_paid = time();
 		$objOrder->updateOrderStatus($this->new_order_status);
 		$objOrder->save();
 		$this->log('Payment with ipayment received for order ID ' . $objOrder->id . '.', __METHOD__, TL_GENERAL);
 		return true;
 	}
-	
-	
+
+
 	public function processPostSale()
 	{
 		$this->internalProcessPayment();
@@ -193,16 +233,16 @@ class PaymentIpayment extends IsotopePayment
 	public function checkoutForm()
 	{
 		$objOrder = new IsotopeOrder();
-		
+
 		if (!$objOrder->findBy('cart_id', $this->Isotope->Cart->id))
 		{
 			$this->redirect($this->addToUrl('step=failed', true));
 		}
-		
+
 		$objAddress = $this->Isotope->Cart->billingAddress;
 		$amount = round(($this->Isotope->Cart->grandTotal * 100));
 		$currency = $this->Isotope->Config->currency;
-		
+
 		$arrParam = array
 		(
 			'trxuser_id'					=> $this->ipayment_trxuser_id,
@@ -231,12 +271,12 @@ class PaymentIpayment extends IsotopePayment
 												$this->ipayment_trxpassword .
 												$this->ipayment_security_key);
 		}
-		
+
 		if ($this->ipayment_use_hidden_trigger)
 		{
 			$arrParam['hidden_trigger_url'] = $this->Environment->base . 'system/modules/isotope/postsale.php?mod=pay&id=' . $this->id;
 		}
-		
+
 		$objTemplate = new FrontendTemplate('iso_payment_ipayment');
 
 		$objTemplate->action = 'https://ipayment.de/merchant/' . $this->ipayment_account_id . '/processor/2.0/';
@@ -247,7 +287,7 @@ class PaymentIpayment extends IsotopePayment
 		return $objTemplate->parse();
 	}
 
-	
+
 	public function backendInterface($orderId)
 	{
 		$objOrder = new IsotopeOrder();
@@ -255,7 +295,7 @@ class PaymentIpayment extends IsotopePayment
 		{
 			return parent::backendInterface($orderId);
 		}
-		
+
 		$result = '
 <div id="tl_buttons">
 <a href="'.ampersand(str_replace('&key=payment', '', $this->Environment->request)).'" class="header_back" title="'.specialchars($GLOBALS['TL_LANG']['MSC']['backBT']).'">'.$GLOBALS['TL_LANG']['MSC']['backBT'].'</a>
@@ -275,13 +315,13 @@ class PaymentIpayment extends IsotopePayment
 	<td>' . $value . '</td>
 </tr>';
 		}
-		
+
 		$result.= '</table>
 </div>
 </div>';
 		return $result;
 	}
-	
+
 }
 
 ?>
