@@ -1,12 +1,16 @@
 Changelog
 =========
 
-Version 1.0.1
+Version 1.1.0
 -------------
 
- - Backend: add help to payment gateway combo box
- - Hidden trigger: Change processing to checkout avoid failure redirect back to
+ - Backend: Improve translations at payment configuration
+ - Backend: Save payment data for an order
+ - Hidden trigger: Change checkout processing to avoid failure redirect back to
    shop after payment.
+ - Fixed #1: check remote ip and hostname only if hidden trigger used
+ - Fixed #2: Use wrong parameter name while process payment
+
 
 Version 1.0.0
 -------------

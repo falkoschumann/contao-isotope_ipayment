@@ -1,2 +1,0 @@
-- Backend: Zahlungsmodul: "Testsystem verwenden" unterstützen
-- Ipayment checkout geht nur jedes 2. Mal, Hidden Trigger geht, aber Aufruf redirect URL scheitert, weil keine Post-Parameter übergeben werden
