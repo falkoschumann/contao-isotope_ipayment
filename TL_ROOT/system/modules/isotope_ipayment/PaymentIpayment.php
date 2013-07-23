@@ -112,14 +112,17 @@ class PaymentIpayment extends IsotopePayment
 		}
 
 		// check remote IP and hostname
-		$remoteIp = $this->Environment->ip;
-		$remoteHostname = gethostbyaddr($remoteIp);
-		if (!preg_match('/\.ipayment\.de$/', $remoteHostname) || !in_array($remoteIp, array('212.227.34.218', '212.227.34.219', '212.227.34.220')))
+		if ($this->ipayment_use_hidden_trigger)
 		{
-			$this->log('Payment for order ID ' . $objOrder->id . ' was not from ipayment.de: ' . $remoteIp . ' / ' . $remoteHostname, __METHOD__, TL_ERROR);
-			return false;
+			$remoteIp = $this->Environment->ip;
+			$remoteHostname = gethostbyaddr($remoteIp);
+			if (!preg_match('/\.ipayment\.de$/', $remoteHostname) || !in_array($remoteIp, array('212.227.34.218', '212.227.34.219', '212.227.34.220')))
+			{
+				$this->log('Payment for order ID ' . $objOrder->id . ' was not from ipayment.de: ' . $remoteIp . ' / ' . $remoteHostname, __METHOD__, TL_ERROR);
+				return false;
+			}
 		}
-
+		
 		// validate order with security key
 		if (!empty($this->ipayment_security_key))
 		{
