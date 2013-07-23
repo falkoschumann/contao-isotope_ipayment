@@ -341,7 +341,7 @@ class PaymentIpayment extends IsotopePayment
 		{
 			$strBuffer .= '
     <tr>
-      <td' . ($i%2 ? '' : ' class="tl_bg"') . '><span class="tl_label">' . $key . ': </span></td>
+      <td' . ($i%2 ? '' : ' class="tl_bg"') . '><span class="tl_label">' . $GLOBALS['TL_LANG']['MSC']['ipayment_' . $key] . ': </span></td>
       <td' . ($i%2 ? '' : ' class="tl_bg"') . '>' . $value . '</td>
     </tr>';
 			++$i;
