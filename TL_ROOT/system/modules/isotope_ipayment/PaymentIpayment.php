@@ -82,7 +82,12 @@ class PaymentIpayment extends IsotopePayment
 		{
 			try
 			{
-				if (!$this->internalProcessPayment())
+				$objOrder = $this->lookForOrder();
+				$this->checkReturnState($objOrder);
+				$this->validateOrderWithSecurityKey($objOrder);
+				$this->validateOrderData($objOrder);
+				$this->addPaymentDataToOrder($objOrder);
+				if (!$this->checkoutOrder($objOrder))
 				{
 					$this->log('ipayment checkout for Order ID ' . $objOrder->id . ' failed', __METHOD__, TL_ERROR);
 					$this->redirect($this->addToUrl('step=failed', true));
@@ -96,21 +101,6 @@ class PaymentIpayment extends IsotopePayment
 		}
 
 		return true;
-	}
-
-
-	/**
-	 * @throws Exception
-	 */
-	private function internalProcessPayment()
-	{
-		$objOrder = $this->lookForOrder();
-		$this->checkReturnState($objOrder);
-		$this->validateRemoteIpAndHostname($objOrder);
-		$this->validateOrderWithSecurityKey($objOrder);
-		// TODO validate order data
-		$this->addPaymentDataToOrder($objOrder);
-		return $this->checkoutOrder($objOrder);
 	}
 
 
@@ -155,9 +145,6 @@ class PaymentIpayment extends IsotopePayment
 	 */
 	private function validateRemoteIpAndHostname(&$objOrder)
 	{
-		if (!$this->ipayment_use_hidden_trigger)
-			return;
-
 		$remoteIp = $this->Environment->ip;
 		$remoteHostname = gethostbyaddr($remoteIp);
 		if (preg_match('/\.ipayment\.de$/', $remoteHostname)
@@ -189,6 +176,16 @@ class PaymentIpayment extends IsotopePayment
 				$this->ipayment_security_key);
 		if ($this->Input->post('ret_param_checksum') != $hash)
 			throw new Exception('ipayment checkout manipulation in payment for order ID ' . $objOrder->id . '!');
+	}
+
+
+	/**
+	 * @param IsotopeOrder $objOrder
+	 * @throws Exception
+	 */
+	private function validateOrderData(&$objOrder)
+	{
+		// TODO validate order data
 	}
 
 
@@ -249,7 +246,13 @@ class PaymentIpayment extends IsotopePayment
 	{
 		try
 		{
-			if (!$this->internalProcessPayment())
+			$objOrder = $this->lookForOrder();
+			$this->checkReturnState($objOrder);
+			$this->validateRemoteIpAndHostname($objOrder);
+			$this->validateOrderWithSecurityKey($objOrder);
+			$this->validateOrderData($objOrder);
+			$this->addPaymentDataToOrder($objOrder);
+			if (!$this->checkoutOrder($objOrder))
 				$this->log('ipayment checkout for Order ID ' . $objOrder->id . ' failed', __METHOD__, TL_ERROR);
 		}
 		catch (Exception $ex)
