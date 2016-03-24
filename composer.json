@@ -1,0 +1,24 @@
+{
+    "name": "falkoschumann/contao-isotope_ipayment",
+    "description": "Payment gateway for the Contao shop extension Isotope to enable payment with 1&1 ipayment.",
+    "version": "v2.0.0-dev",
+    "keywords": [
+        "contao",
+        "extension",
+        "isotope",
+        "payment",
+        "ipayment"
+    ],
+    "homepage": "https://github.com/falkoschumann/contao-isotope_ipayment",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Falko Schumann",
+            "homepage": "https://www.muspellheim.de"
+        }
+    ],
+    "require": {
+        "contao/core": "~3.5",
+        "isotope/isotope-core": "~2.3"
+    }
+}
