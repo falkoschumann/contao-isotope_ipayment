@@ -246,8 +246,15 @@ class Ipayment extends Payment implements IsotopePayment, IsotopePostsale
 
     private function addParameterZurIdentifikationDesIpaymentAccounts(array $arrParam)
     {
-        $arrParam['trxuser_id'] = $this->debug ? (empty($this->ipayment_security_key) ? '99999' : '99998') : $this->ipayment_trxuser_id;
-        $arrParam['trxpassword'] = $this->debug ? '0' : $this->ipayment_trxpassword;
+        if ($this->debug) {
+            $trxuser_id = empty($this->ipayment_security_key) ? 99999 : 99998;
+            $trxpassword = 0;
+        } else {
+            $trxuser_id = $this->ipayment_trxuser_id;
+            $trxpassword = $this->ipayment_trxpassword;
+        }
+        $arrParam['trxuser_id'] = (int) $trxuser_id;
+        $arrParam['trxpassword'] = (int) $trxpassword;
         return $arrParam;
     }
 
@@ -255,8 +262,8 @@ class Ipayment extends Payment implements IsotopePayment, IsotopePostsale
     {
         if (!isset($this->currencies[$objOrder->currency])) throw new Exception("Unknown currency " . $objOrder->currency);
 
-        $arrParam['trx_currency'] = $objOrder->currency;
-        $arrParam['trx_amount'] = round(($objOrder->getTotal() * pow(10, $this->currencies[$objOrder->currency])));
+        $arrParam['trx_currency'] = substr($objOrder->currency, 0, 3);
+        $arrParam['trx_amount'] = (int) round(($objOrder->getTotal() * pow(10, $this->currencies[$objOrder->currency])));
         return $arrParam;
     }
 
@@ -270,20 +277,21 @@ class Ipayment extends Payment implements IsotopePayment, IsotopePostsale
     private function addParameterFuerNameUndAdresseDesKarteninhabers(IsotopeProductCollection $objOrder, array $arrParam)
     {
         $objBillingAddress = $objOrder->getBillingAddress();
-        $arrParam['addr_name'] = $objBillingAddress->firstname . ' ' . $objBillingAddress->lastname;
-        $arrParam['addr_email'] = $objBillingAddress->email;
-        $arrParam['addr_street'] = $objBillingAddress->street_1;
-        $arrParam['addr_city'] = $objBillingAddress->city;
-        $arrParam['addr_zip'] = $objBillingAddress->postal;
-        $arrParam['addr_country'] = strtoupper($objBillingAddress->country);
-        $arrParam['addr_state'] = strtoupper($objBillingAddress->subdivision);
+        $arrParam['addr_name'] = substr($objBillingAddress->firstname . ' ' . $objBillingAddress->lastname, 0, 100);
+        $arrParam['addr_email'] = substr($objBillingAddress->email, 0, 80);
+        $arrParam['addr_street'] = substr($objBillingAddress->street_1, 0, 255);
+        $arrParam['addr_city'] = substr($objBillingAddress->city, 0, 50);
+        $arrParam['addr_zip'] = substr($objBillingAddress->postal, 0, 20);
+        $arrParam['addr_country'] = strtoupper(substr($objBillingAddress->country, 0, 3));
+        // TODO Korrektheit der Angabe des Staates prüfen
+        $arrParam['addr_state'] = strtoupper(substr($objBillingAddress->subdivision, 2));
         return $arrParam;
     }
 
     private function addParameterZurKennzeichnungVonTransaktionen(IsotopeProductCollection $objOrder, array $arrParam)
     {
-        $arrParam['shopper_id'] = $objOrder->uniqid;
-        $arrParam['advanced_strict_id_check'] = $this->ipayment_advanced_strict_id_check;
+        $arrParam['shopper_id'] = substr($objOrder->uniqid, 0, 255);
+        $arrParam['advanced_strict_id_check'] = $this->ipayment_advanced_strict_id_check ? 1 : 0;
         return $arrParam;
     }
 
@@ -295,7 +303,7 @@ class Ipayment extends Payment implements IsotopePayment, IsotopePostsale
 
     private function addParameterFuerRueckspruengeInDenShop(IsotopeProductCollection $objOrder, \Module $objModule, array $arrParam)
     {
-        $arrParam['redirect_url'] = \Environment::get('base') . $objModule->generateUrlForStep('complete', $objOrder);
+        $arrParam['redirect_url'] = substr(\Environment::get('base') . $objModule->generateUrlForStep('complete', $objOrder), 0, 255);
         $arrParam['redirect_action'] = 'POST';
         return $arrParam;
     }
@@ -354,7 +362,7 @@ class Ipayment extends Payment implements IsotopePayment, IsotopePostsale
     private function addParameterFuerDieGesicherteRueckmeldung(array $arrParam)
     {
         if ($this->ipayment_use_hidden_trigger) {
-            $arrParam['hidden_trigger_url'] = \Environment::get('base') . 'system/modules/isotope/postsale.php?mod=pay&id=' . $this->id;
+            $arrParam['hidden_trigger_url'] = substr(\Environment::get('base') . 'system/modules/isotope/postsale.php?mod=pay&id=' . $this->id, 0, 255);
         }
         return $arrParam;
     }
@@ -374,9 +382,7 @@ class Ipayment extends Payment implements IsotopePayment, IsotopePostsale
     private function createFormularZurUebermittlungDerZahlungsparameter(array $arrParam)
     {
         $objTemplate = new \FrontendTemplate('iso_payment_ipayment');
-        $objTemplate->action = 'https://ipayment.de/merchant/' .
-            ($this->debug ? '99999' : $this->ipayment_account_id) .
-            '/processor/2.0/';
+        $objTemplate->action = 'https://ipayment.de/merchant/' . ($this->debug ? '99999' : $this->ipayment_account_id) . '/processor/2.0/';
         $objTemplate->params = $arrParam;
         $objTemplate->submitLabel = $GLOBALS['TL_LANG']['MSC']['ipayment_submit_label'];
         $objTemplate->id = $this->id;

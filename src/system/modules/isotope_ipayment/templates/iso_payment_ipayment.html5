@@ -6,7 +6,7 @@
     <?php if (!$this->debug): ?>
     <noscript>
     <?php endif; ?>
-        <input type="submit" value="<?= $this->submitLabel ?>">
+        <input type="submit" class="submit ipayment button" name="nextStep" value="<?= $this->submitLabel ?>">
     <?php if (!$this->debug): ?>
     </noscript>
     <?php endif; ?>
