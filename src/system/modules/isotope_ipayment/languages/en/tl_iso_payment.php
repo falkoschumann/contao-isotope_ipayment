@@ -19,5 +19,3 @@ $GLOBALS['TL_LANG']['tl_iso_payment']['ipayment_trxpassword'] = array('Applicati
 $GLOBALS['TL_LANG']['tl_iso_payment']['ipayment_security_key'] = array('Security Key', 'With the optional security key you can protect transactions.');
 $GLOBALS['TL_LANG']['tl_iso_payment']['ipayment_advanced_strict_id_check'] = array('Use advanced strict id check', 'Advanced check to avoid double transactions. If checked every transaction is marked with an unique order number and ipayment check this before payment.');
 $GLOBALS['TL_LANG']['tl_iso_payment']['ipayment_use_hidden_trigger'] = array('Use hidden trigger', 'If checked transaction result is trigger by an other URL than the redirect URL used for clients return to shop. This guarantee that the transaction is obtained if client do not retun to shop after payment.');
-
-?>

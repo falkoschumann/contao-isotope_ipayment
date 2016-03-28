@@ -10,7 +10,6 @@
  * @license MIT
  */
 
-
 /**
  * Payment methods
  */

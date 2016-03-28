@@ -46,7 +46,10 @@ Applikation Payment ipayment
 
 #### Interaktion Process Payment
 
-*   TODO
+*   Rückgabeparameter Zahlungsabwicklung
+    *   Rückgabeparameter zum Transaktionsergebnis
+    *   Rückgabeparameter zu erfolgreichen Transaktionen
+    *   Weitere Rückgabeparameter
 
 
 ### Dialog Postsale (Isotope)

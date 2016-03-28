@@ -10,7 +10,6 @@
  * @license MIT
  */
 
-
 /**
  * Register the namespaces
  */
@@ -18,7 +17,6 @@ ClassLoader::addNamespaces(array
 (
     'IsotopeIpayment',
 ));
-
 
 /**
  * Register the classes
@@ -28,7 +26,6 @@ ClassLoader::addClasses(array
     // Classes
     'IsotopeIpayment\Ipayment' => 'system/modules/isotope_ipayment/classes/Ipayment.php'
 ));
-
 
 /**
  * Register the templates
