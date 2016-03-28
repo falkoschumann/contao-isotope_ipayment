@@ -220,6 +220,7 @@ class Ipayment extends Payment implements IsotopePayment, IsotopePostsale
 
     private function getParameterZurZahlungsabwicklung(IsotopeProductCollection $objOrder, \Module $objModule)
     {
+        // TODO Notwendige Parameter (Abschnitt 5.9) prüfen
         $arrParam = $this->getBasisparameter($objOrder, $objModule);
         $arrParam = $this->addZahlungsdaten($arrParam);
         $arrParam = $this->addGesicherteRueckmeldungErfolgreicherTransaktionen($arrParam);
@@ -260,7 +261,9 @@ class Ipayment extends Payment implements IsotopePayment, IsotopePostsale
 
     private function addParameterFuerBetragUndWaehrung(IsotopeProductCollection $objOrder, array $arrParam)
     {
-        if (!isset($this->currencies[$objOrder->currency])) throw new Exception("Unknown currency " . $objOrder->currency);
+        if (!isset($this->currencies[$objOrder->currency])) {
+            throw new Exception("Unknown currency " . $objOrder->currency);
+        }
 
         $arrParam['trx_currency'] = substr($objOrder->currency, 0, 3);
         $arrParam['trx_amount'] = (int) round(($objOrder->getTotal() * pow(10, $this->currencies[$objOrder->currency])));
@@ -270,6 +273,7 @@ class Ipayment extends Payment implements IsotopePayment, IsotopePostsale
     private function addParameterZurAngabeDerGewuenschtenZahlung(array $arrParam)
     {
         $arrParam['trx_typ'] = 'auth';
+        // TODO Zahlungsart variabel machen
         $arrParam['trx_paymenttyp'] = 'cc';
         return $arrParam;
     }
@@ -316,6 +320,7 @@ class Ipayment extends Payment implements IsotopePayment, IsotopePostsale
 
     private function addParameterFuerEinstellungenDesZahlungssystems(array $arrParam)
     {
+        // TODO Ist das wirklich notwendig?
         $arrParam['return_paymentdata_details'] = 1;
         return $arrParam;
     }
@@ -328,18 +333,21 @@ class Ipayment extends Payment implements IsotopePayment, IsotopePostsale
 
     private function addWeitereParameter(IsotopeProductCollection $objOrder, array $arrParam)
     {
-        if (!empty($this->ipayment_security_key)) {
-            if (!isset($this->currencies[$objOrder->currency])) throw new Exception("Unknown currency " . $objOrder->currency);
-
-            $amount = round(($objOrder->getTotal() * pow(10, $this->currencies[$objOrder->currency])));
-            $arrParam['trx_securityhash'] = md5(
-                $this->ipayment_trxuser_id .
-                $amount .
-                $objOrder->currency .
-                $this->ipayment_trxpassword .
-                ($this->debug ? 'testtest' : $this->ipayment_security_key));
+        if (empty($this->ipayment_security_key)) {
+            return $arrParam;
         }
 
+        if (!isset($this->currencies[$objOrder->currency])) {
+            throw new Exception("Unknown currency " . $objOrder->currency);
+        }
+
+        $amount = round(($objOrder->getTotal() * pow(10, $this->currencies[$objOrder->currency])));
+        $arrParam['trx_securityhash'] = md5(
+            $this->ipayment_trxuser_id .
+            $amount .
+            $objOrder->currency .
+            $this->ipayment_trxpassword .
+            ($this->debug ? 'testtest' : $this->ipayment_security_key));
         return $arrParam;
     }
 
