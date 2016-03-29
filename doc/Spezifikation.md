@@ -10,9 +10,12 @@ Dokumentation:
 Applikation Payment ipayment
 ----------------------------
 
-*   Unterstützt nur den Normalen CGI-Modus.
-*   Unterstützt nur den Transaktionstyp: Sofortige Buchung einer Zahlung: Autorisieren und abbuchen (auth)
-*   Unterst+tzt nur die Zahlungsart per Kreditkarte
+*   Unterstützt nur den normalen CGI-Modus.
+*   Unterstützt nur den Transaktionstyp: Sofortige Buchung einer Zahlung: Autorisieren und abbuchen (auth).
+*   Unterstützt nur die Zahlungsart per Kreditkarte.
+*   Erlaubt die Verwendung eines Hidden-Triggers zur Zahlungsbestätigung, auch wenn der Kunde nach dem Bezahlen nicht zurück zum Shop geht.
+*   Erlaubt die Verwendung des Security-Keys zur Absicherung des Zahlungsvorgangs gegen Betrugsversuch.
+*   Erlaubt die Durchführung der erweiterte Prüfung zur Vermeidung von Doppeltransaktionen.
 
 
 ### Dialog Payment (Isotope)

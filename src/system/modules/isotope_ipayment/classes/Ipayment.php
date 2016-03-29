@@ -248,15 +248,8 @@ class Ipayment extends Payment implements IsotopePayment, IsotopePostsale
 
     private function addParameterZurIdentifikationDesIpaymentAccounts(array &$arrParam)
     {
-        if ($this->debug) {
-            $trxuser_id = empty($this->ipayment_security_key) ? 99999 : 99998;
-            $trxpassword = 0;
-        } else {
-            $trxuser_id = $this->ipayment_trxuser_id;
-            $trxpassword = $this->ipayment_trxpassword;
-        }
-        $arrParam['trxuser_id'] = (int) $trxuser_id;
-        $arrParam['trxpassword'] = (int) $trxpassword;
+        $arrParam['trxuser_id'] = $this->ipayment_trxuser_id;
+        $arrParam['trxpassword'] = $this->ipayment_trxpassword;
     }
 
     private function addParameterFuerBetragUndWaehrung(IsotopeProductCollection &$objOrder, array &$arrParam)
@@ -338,7 +331,7 @@ class Ipayment extends Payment implements IsotopePayment, IsotopePostsale
             $amount .
             $objOrder->currency .
             $this->ipayment_trxpassword .
-            ($this->debug ? 'testtest' : $this->ipayment_security_key));
+            $this->ipayment_security_key);
     }
 
     private function addZahlungsdaten(array &$arrParam)
@@ -375,11 +368,10 @@ class Ipayment extends Payment implements IsotopePayment, IsotopePostsale
     private function createFormularZurUebermittlungDerZahlungsparameter(array &$arrParam)
     {
         $objTemplate = new \FrontendTemplate('iso_payment_ipayment');
-        $objTemplate->action = 'https://ipayment.de/merchant/' . ($this->debug ? '99999' : $this->ipayment_account_id) . '/processor/2.0/';
+        $objTemplate->action = 'https://ipayment.de/merchant/' . $this->ipayment_account_id . '/processor/2.0/';
         $objTemplate->params = $arrParam;
         $objTemplate->submitLabel = $GLOBALS['TL_LANG']['MSC']['ipayment_submit_label'];
         $objTemplate->id = $this->id;
-        $objTemplate->debug = $this->debug;
         return $objTemplate->parse();
     }
 
@@ -449,7 +441,7 @@ class Ipayment extends Payment implements IsotopePayment, IsotopePostsale
             $objOrder->currency .
             $_POST['ret_authcode'] .
             $_POST['ret_trx_number'] .
-            ($this->debug ? 'testtest' : $this->ipayment_security_key));
+            $this->ipayment_security_key);
         if ($_POST['ret_param_checksum'] != $hash) {
             \System::log('ipayment: checkout manipulation detected in payment for order ID ' . $objOrder->id . '!', __METHOD__, TL_ERROR);
             return false;

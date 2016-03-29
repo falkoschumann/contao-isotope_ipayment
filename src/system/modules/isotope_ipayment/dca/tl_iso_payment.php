@@ -17,7 +17,7 @@
 /**
  * Palettes
  */
-$GLOBALS['TL_DCA']['tl_iso_payment']['palettes']['ipayment'] = '{type_legend},name,label,type;{note_legend:hide},note;{config_legend},new_order_status,quantity_mode,minimum_quantity,maximum_quantity,minimum_total,maximum_total,countries,shipping_modules,product_types,product_types_condition,config_ids;{gateway_legend},ipayment_account_id,ipayment_trxuser_id,ipayment_trxpassword,ipayment_security_key,ipayment_advanced_strict_id_check,ipayment_use_hidden_trigger;{price_legend:hide},price,tax_class;{expert_legend:hide},guests,protected;{enabled_legend},debug,enabled';
+$GLOBALS['TL_DCA']['tl_iso_payment']['palettes']['ipayment'] = '{type_legend},name,label,type;{note_legend:hide},note;{config_legend},new_order_status,quantity_mode,minimum_quantity,maximum_quantity,minimum_total,maximum_total,countries,shipping_modules,product_types,product_types_condition,config_ids;{gateway_legend},ipayment_account_id,ipayment_trxuser_id,ipayment_trxpassword,ipayment_security_key,ipayment_advanced_strict_id_check,ipayment_use_hidden_trigger;{price_legend:hide},price,tax_class;{expert_legend:hide},guests,protected;{enabled_legend},enabled';
 
 /**
  * Fields
