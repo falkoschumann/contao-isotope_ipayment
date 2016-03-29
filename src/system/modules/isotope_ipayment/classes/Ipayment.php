@@ -384,6 +384,11 @@ class Ipayment extends Payment implements IsotopePayment, IsotopePostsale
      */
     public function processPayment(IsotopeProductCollection $objOrder, \Module $objModule)
     {
+        return $this->process($objOrder);
+    }
+
+    private function process(IsotopeProductCollection &$objOrder)
+    {
         if (!$this->validateRueckgabeparameterZahlungsabwicklung($objOrder)) {
             return false;
         }
@@ -452,13 +457,14 @@ class Ipayment extends Payment implements IsotopePayment, IsotopePostsale
 
     private function validateWeitereRueckgabeparameter(IsotopeProductCollection &$objOrder)
     {
+        // TODO Filter return values?
         $arrPayment = array();
-        $arrPayment['ret_ip'] = $_POST['ret_ip'];
-        $arrPayment['trx_paymentmethod'] = $_POST['trx_paymentmethod'];
+//        $arrPayment['ret_ip'] = $_POST['ret_ip'];
+//        $arrPayment['trx_paymentmethod'] = $_POST['trx_paymentmethod'];
         foreach ($_POST as $key => $value) {
-            if (substr($key, 0, 8) === "paydata_") {
+//            if (substr($key, 0, 8) === "paydata_" || substr($key, 0, 4) === "ret_") {
                 $arrPayment[$key] = $value;
-            }
+//            }
         }
         $objOrder->payment_data = $arrPayment;
         return true;
@@ -472,18 +478,24 @@ class Ipayment extends Payment implements IsotopePayment, IsotopePostsale
      */
     public function processPostsale(IsotopeProductCollection $objOrder)
     {
-        // TODO: Implement processPostsale() method.
-/*
+        if ($this->validateIpaymentServer($objOrder)) {
+            $this->process($objOrder);
+        }
+    }
+
+
+    private function validateIpaymentServer(IsotopeProductCollection &$objOrder)
+    {
         $remoteIp = $_SERVER['REMOTE_ADDR'];
-        $remoteHostname = $_SERVER['REMOTE_HOST']; // gethostbyaddr($remoteIp);
+        $remoteHostname = $_SERVER['REMOTE_HOST']; // TODO gethostbyaddr($remoteIp); ???
         if (preg_match('/\.ipayment\.de$/', $remoteHostname)
             && in_array($remoteIp, array('212.227.34.218', '212.227.34.219', '212.227.34.220')))
-            return;
+            return true;
 
-        throw new Exception('Payment for order ID ' . $objOrder->id . ' was not from ipayment.de:' .
-            ' IP=' . $remoteIp .
-            ', hostname=' . $remoteHostname);
-*/
+        \System::log('Payment for order ID ' . $objOrder->id . ' was not from ipayment.de: ' .
+            'IP=' . $remoteIp .
+            ', hostname=' . $remoteHostname, __METHOD__, TL_ERROR);
+        return false;
     }
 
     /**
@@ -493,7 +505,8 @@ class Ipayment extends Payment implements IsotopePayment, IsotopePostsale
      */
     public function getPostsaleOrder()
     {
-        // TODO: Implement getPostsaleOrder() method.
+        $orderId = $_POST['shopper_id'];
+        return Order::findByPk($orderId);
     }
 
     /**
