@@ -13,7 +13,7 @@ namespace IsotopeIpayment;
 use Isotope\Interfaces\IsotopePayment;
 use Isotope\Interfaces\IsotopePostsale;
 use Isotope\Interfaces\IsotopeProductCollection;
-use Isotope\Model\Payment;
+use Isotope\Model\Payment\Postsale;
 use Isotope\Model\ProductCollection\Order;
 
 /**
@@ -27,7 +27,7 @@ use Isotope\Model\ProductCollection\Order;
  * @property bool   $ipayment_advanced_strict_id_check
  * @property bool   $ipayment_use_hidden_trigger
  */
-class Ipayment extends Payment implements IsotopePayment, IsotopePostsale
+class Ipayment extends Postsale implements IsotopePayment, IsotopePostsale
 {
 
     private $currencies = array(
@@ -384,6 +384,10 @@ class Ipayment extends Payment implements IsotopePayment, IsotopePostsale
      */
     public function processPayment(IsotopeProductCollection $objOrder, \Module $objModule)
     {
+        if ($this->ipayment_use_hidden_trigger) {
+            return parent::processPayment($objOrder, $objModule);
+        }
+
         return $this->process($objOrder);
     }
 
@@ -482,7 +486,6 @@ class Ipayment extends Payment implements IsotopePayment, IsotopePostsale
             $this->process($objOrder);
         }
     }
-
 
     private function validateIpaymentServer(IsotopeProductCollection &$objOrder)
     {
