@@ -405,7 +405,7 @@ class Ipayment extends Postsale implements IsotopePayment, IsotopePostsale
         $objOrder->updateOrderStatus($this->new_order_status);
         $objOrder->save();
 
-        \System::log('ipayment: checkout for Order ID "' . $objOrder->id . '" successful', __METHOD__, TL_ERROR);
+        \System::log('ipayment: checkout for Order ID "' . $objOrder->id . '" completed', __METHOD__, TL_GENERAL);
         return true;
     }
 
@@ -490,7 +490,7 @@ class Ipayment extends Postsale implements IsotopePayment, IsotopePostsale
     private function validateIpaymentServer(IsotopeProductCollection &$objOrder)
     {
         $remoteIp = $_SERVER['REMOTE_ADDR'];
-        $remoteHostname = $_SERVER['REMOTE_HOST']; // TODO gethostbyaddr($remoteIp); ???
+        $remoteHostname = gethostbyaddr($remoteIp);
         if (preg_match('/\.ipayment\.de$/', $remoteHostname)
             && in_array($remoteIp, array('212.227.34.218', '212.227.34.219', '212.227.34.220')))
             return true;
@@ -509,7 +509,7 @@ class Ipayment extends Postsale implements IsotopePayment, IsotopePostsale
     public function getPostsaleOrder()
     {
         $orderId = $_POST['shopper_id'];
-        return Order::findByPk($orderId);
+        return Order::findOneBy('uniqid', $orderId);
     }
 
     /**

@@ -1,4 +1,4 @@
-Agile Analyse für ipayment v1.2
+Spezifikation für ipayment v1.2
 ===============================
 
 Dokumentation:
