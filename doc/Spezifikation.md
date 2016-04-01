@@ -1,22 +1,8 @@
-Spezifikation für ipayment v1.2
-===============================
-
-Dokumentation:
-
-*   https://ipayment.de
-*   https://ipayment.de/technik/referenzen.php
-
+Spezifikation
+=============
 
 Applikation Payment ipayment
 ----------------------------
-
-*   Unterstützt nur den normalen CGI-Modus.
-*   Unterstützt nur den Transaktionstyp: Sofortige Buchung einer Zahlung: Autorisieren und abbuchen (auth).
-*   Unterstützt nur die Zahlungsart per Kreditkarte.
-*   Erlaubt die Verwendung eines Hidden-Triggers zur Zahlungsbestätigung, auch wenn der Kunde nach dem Bezahlen nicht zurück zum Shop geht.
-*   Erlaubt die Verwendung des Security-Keys zur Absicherung des Zahlungsvorgangs gegen Betrugsversuch.
-*   Erlaubt die Durchführung der erweiterte Prüfung zur Vermeidung von Doppeltransaktionen.
-
 
 ### Dialog Payment (Isotope)
 
@@ -55,22 +41,19 @@ Applikation Payment ipayment
     *   Weitere Rückgabeparameter
 
 
+#### Interaktion Backend Interface
+
+*   Rückgabeparameter der Zahlungsabwicklung einer Bestellung darstellen
+
+
 ### Dialog Postsale (Isotope)
 
-#### Interaktion Process Postsale
+#### Interaktion Process
 
-*   TODO
+*   Sicherstellen, dass der Aufruf von einem ipayment-Server kommt.
+*   Sonst wie Interaktion _Process Payment_
 
 
 #### Interaktion Get Postsale Order
 
-*   TODO
-
-
-To-do
------
-
-*   [ ] Sonderzeichen in URLs encodieren (PHP: urlencode($value)) S. 29
-*   [ ] Optional Session-ID
-*   [ ] Optional Hidden-Trigger-Skript
-*   [ ] Optional Advanced-Strict-Id-Check
+*   Bestimme anhand der Rückgabeparameter der Zahlungsabwicklung die Bestellung

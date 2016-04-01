@@ -1,5 +1,5 @@
-Akzeptanztest für ipayment v1.2
-===============================
+Akzeptanztest
+=============
 
 Die folgenden Prüfungen werden mit der Isotope-Demo durchgeführt. Um die
 Parameterübergabe an ipayment zu validieren, muss das Template
