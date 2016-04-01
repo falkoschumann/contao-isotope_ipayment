@@ -221,7 +221,6 @@ class Ipayment extends Postsale implements IsotopePayment, IsotopePostsale
 
     private function getParameterZurZahlungsabwicklung(IsotopeProductCollection &$objOrder, \Module &$objModule)
     {
-        // TODO Notwendige Parameter (Abschnitt 5.9) prüfen
         $arrParam = $this->getBasisparameter($objOrder, $objModule);
         $this->addZahlungsdaten($arrParam);
         $this->addGesicherteRueckmeldungErfolgreicherTransaktionen($arrParam);
@@ -265,7 +264,6 @@ class Ipayment extends Postsale implements IsotopePayment, IsotopePostsale
     private function addParameterZurAngabeDerGewuenschtenZahlung(array &$arrParam)
     {
         $arrParam['trx_typ'] = 'auth';
-        // TODO Zahlungsart variabel machen
         $arrParam['trx_paymenttyp'] = 'cc';
     }
 
@@ -278,8 +276,7 @@ class Ipayment extends Postsale implements IsotopePayment, IsotopePostsale
         $arrParam['addr_city'] = substr($objBillingAddress->city, 0, 50);
         $arrParam['addr_zip'] = substr($objBillingAddress->postal, 0, 20);
         $arrParam['addr_country'] = strtoupper(substr($objBillingAddress->country, 0, 3));
-        // TODO Korrektheit der Angabe des Staates prüfen
-        $arrParam['addr_state'] = strtoupper(substr($objBillingAddress->subdivision, 2));
+        $arrParam['addr_state'] = strtoupper(substr($objBillingAddress->subdivision, strpos($objBillingAddress->subdivision, '-') + 1));
     }
 
     private function addParameterZurKennzeichnungVonTransaktionen(IsotopeProductCollection &$objOrder, array &$arrParam)
@@ -306,7 +303,6 @@ class Ipayment extends Postsale implements IsotopePayment, IsotopePostsale
 
     private function addParameterFuerEinstellungenDesZahlungssystems(array &$arrParam)
     {
-        // TODO Ist das wirklich notwendig?
         $arrParam['return_paymentdata_details'] = 1;
     }
 
@@ -461,16 +457,7 @@ class Ipayment extends Postsale implements IsotopePayment, IsotopePostsale
 
     private function validateWeitereRueckgabeparameter(IsotopeProductCollection &$objOrder)
     {
-        // TODO Filter return values?
-        $arrPayment = array();
-//        $arrPayment['ret_ip'] = $_POST['ret_ip'];
-//        $arrPayment['trx_paymentmethod'] = $_POST['trx_paymentmethod'];
-        foreach ($_POST as $key => $value) {
-//            if (substr($key, 0, 8) === "paydata_" || substr($key, 0, 4) === "ret_") {
-                $arrPayment[$key] = $value;
-//            }
-        }
-        $objOrder->payment_data = $arrPayment;
+        $objOrder->payment_data = $_POST;
         return true;
     }
 
