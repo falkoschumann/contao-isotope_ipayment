@@ -36,7 +36,7 @@ class PaymentProcessorDelegate
             return false;
         }
 
-        $objOrder->updateOrderStatus($this->new_order_status);
+        $objOrder->updateOrderStatus($this->delegator->new_order_status);
         $objOrder->save();
 
         \System::log('ipayment: checkout for Order ID "' . $objOrder->id . '" completed', __METHOD__, TL_GENERAL);
@@ -74,17 +74,17 @@ class PaymentProcessorDelegate
 
     private function validateRueckgabeparameterZuErfolgreichenTransaktionen(IsotopeProductCollection &$objOrder)
     {
-        if (empty($this->ipayment_security_key)) {
+        if (empty($this->delegator->ipayment_security_key)) {
             return true;
         }
 
-        $amount = round(($objOrder->getTotal() * pow(10, $this->currencies[$objOrder->currency])));
-        $hash = md5($this->ipayment_trxuser_id .
+        $amount = round(($objOrder->getTotal() * pow(10, $this->delegator->currencies[$objOrder->currency])));
+        $hash = md5($this->delegator->ipayment_trxuser_id .
             $amount .
             $objOrder->currency .
             $_POST['ret_authcode'] .
             $_POST['ret_trx_number'] .
-            $this->ipayment_security_key);
+            $this->delegator->ipayment_security_key);
         if ($_POST['ret_param_checksum'] != $hash) {
             \System::log('ipayment: checkout manipulation detected in payment for order ID ' . $objOrder->id . '!', __METHOD__, TL_ERROR);
             return false;

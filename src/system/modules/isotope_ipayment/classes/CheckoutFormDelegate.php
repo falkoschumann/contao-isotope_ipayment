@@ -130,7 +130,7 @@ class CheckoutFormDelegate
     private function addParameterFuerDieGesicherteRueckmeldung(array &$arrParam)
     {
         if ($this->delegator->ipayment_use_hidden_trigger) {
-            $arrParam['hidden_trigger_url'] = substr(\Environment::get('base') . 'system/modules/isotope/postsale.php?mod=pay&id=' . $this->id, 0, 255);
+            $arrParam['hidden_trigger_url'] = substr(\Environment::get('base') . 'system/modules/isotope/postsale.php?mod=pay&id=' . $this->delegator->id, 0, 255);
         }
     }
     
@@ -141,7 +141,7 @@ class CheckoutFormDelegate
         $objTemplate->params = $arrParam;
         $objTemplate->redirectDescription = $GLOBALS['TL_LANG']['MSC']['ipayment_redirect_description'];
         $objTemplate->submitLabel = $GLOBALS['TL_LANG']['MSC']['ipayment_submit_label'];
-        $objTemplate->id = $this->id;
+        $objTemplate->id = $this->delegator->id;
         return $objTemplate->parse();
     }
 
