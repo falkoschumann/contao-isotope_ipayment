@@ -139,6 +139,7 @@ class CheckoutFormDelegate
         $objTemplate = new \FrontendTemplate('iso_payment_ipayment');
         $objTemplate->action = 'https://ipayment.de/merchant/' . $this->delegator->ipayment_account_id . '/processor/2.0/';
         $objTemplate->params = $arrParam;
+        $objTemplate->redirectDescription = $GLOBALS['TL_LANG']['MSC']['ipayment_redirect_description'];
         $objTemplate->submitLabel = $GLOBALS['TL_LANG']['MSC']['ipayment_submit_label'];
         $objTemplate->id = $this->id;
         return $objTemplate->parse();

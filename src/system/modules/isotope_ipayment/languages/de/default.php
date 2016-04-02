@@ -13,6 +13,7 @@
 /**
  * Miscellaneous
  */
+$GLOBALS['TL_LANG']['MSC']['ipayment_redirect_description'] = 'Sie werden gleich automatisch auf die Webseite unseres Zahlungsdienstleisters zum Bezahlen weitergeleitet. Sollte die Weiterleitung nicht automatisch geschehen, klicken Sie bitte auf <em>Bezahlen</em>.';
 $GLOBALS['TL_LANG']['MSC']['ipayment_submit_label'] = 'Bezahlen';
 
 // Basisparameter

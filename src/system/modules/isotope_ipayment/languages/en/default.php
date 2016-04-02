@@ -13,6 +13,7 @@
 /**
  * Miscellaneous
  */
+$GLOBALS['TL_LANG']['MSC']['ipayment_redirect_description'] = 'You will automatically be redirected to the website of our payment service to pay. If the forwarding does not happen automatically, please click on <em>Pay</em>.';
 $GLOBALS['TL_LANG']['MSC']['ipayment_submit_label'] = 'Pay';
 
 // Basisparameter
