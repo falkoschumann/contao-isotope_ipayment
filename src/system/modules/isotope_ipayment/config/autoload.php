@@ -24,7 +24,9 @@ ClassLoader::addNamespaces(array
 ClassLoader::addClasses(array
 (
     // Classes
-    'IsotopeIpayment\Ipayment' => 'system/modules/isotope_ipayment/classes/Ipayment.php'
+    'IsotopeIpayment\Ipayment'                 => 'system/modules/isotope_ipayment/classes/Ipayment.php',
+    'IsotopeIpayment\CheckoutFormDelegate'     => 'system/modules/isotope_ipayment/classes/CheckoutFormDelegate.php',
+    'IsotopeIpayment\PaymentProcessorDelegate' => 'system/modules/isotope_ipayment/classes/PaymentProcessorDelegate.php'
 ));
 
 /**

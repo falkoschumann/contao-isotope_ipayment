@@ -16,20 +16,12 @@ Applikation Payment ipayment
         *   Parameter zur Angabe der gewünschten Zahlung
         *   Parameter für Name und Adresse des Karteninhabers
         *   Parameter zur Kennzeichnung von Transaktionen
-        *   Parameter zur Referenzierung der Transaktion
         *   Parameter für Rücksprünge in den Shop
         *   Parameter für die Durchführung der Sicherheitsprüfungen
         *   Parameter für Einstellungen des Zahlungssystems
-        *   Parameter für die Integration in Shop-Systeme
         *   Weitere Parameter
-    *   Zahlungsdaten
-        *   Parameter für Kredit- und Debitkartenzahlungen
-        *   Parameter für ELV-Zahlungen
-        *   Parameter für Prepaid-Zahlungen
     *   Gesicherte Rückmeldung erfolgreicher Transaktionen
         *   Parameter für die gesicherte Rückmeldung
-    *   Session-IDs vorgenerieren
-        * Parameter für die Nutzung einer vorgenerierten Session
 *   Formular zur Übermittlung der Zahlungsparameter
 
 
