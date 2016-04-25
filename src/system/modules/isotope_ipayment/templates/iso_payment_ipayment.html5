@@ -1,0 +1,13 @@
+<p><?= $this->redirectDescription ?></p>
+<form id="ipayment<?= $this->id ?>" action="<?= $this->action ?>" method="post">
+    <?php foreach ($this->params as $k => $v): ?>
+    <input type="hidden" name="<?= $k ?>" value="<?= $v ?>">
+    <?php endforeach; ?>
+    <input type="hidden" name="REQUEST_TOKEN" value="{{request_token}}">
+    <input type="submit" class="submit ipayment button" name="nextStep" value="<?= $this->submitLabel ?>">
+</form>
+<script>
+    window.addEvent('domready', function () {
+        $('ipayment<?= $this->id ?>').submit();
+    });
+</script>
