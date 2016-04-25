@@ -1,15 +1,7 @@
-# OS
-.DS_Store
-Thumbs.db
+# Composer
+composer.lock
+vendor/
 
-# IDEs 
-.buildpath
-.project
-.settings/
-.build/
+# IntelliJ IDEA
 .idea/
-nbproject/
-
-# Books
-build.properties
-*.zip
+*.iml
