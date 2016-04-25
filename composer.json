@@ -1,7 +1,7 @@
 {
     "name": "falkoschumann/contao-isotope_ipayment",
     "description": "Payment gateway for the Contao shop extension Isotope to enable payment with 1&1 ipayment.",
-    "version": "v2.0.0-dev",
+    "version": "2.0.0",
     "keywords": [
         "contao",
         "extension",
