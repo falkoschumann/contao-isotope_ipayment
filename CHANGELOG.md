@@ -4,7 +4,7 @@ Changelog
 Version 2.0.0
 -------------
 
-*   Uprade to Isotope 2.3 and ipayment 1.2.
+*   Upgrade to Isotope 2.3 and ipayment 1.2.
 
 
 Version 1.1.0
